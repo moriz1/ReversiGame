@@ -136,7 +136,7 @@ void ReversiBoard::flipBlackHelper(short index) {
                 //also have to check if the next square isn't empty, or edge of board
                 if (nextDirection != -1 && board[nextDirection].val != -1)
                 {
-                    whiteMoves.erase(std::remove(whiteMoves.begin(), whiteMoves.end(), currentSearchIndex));
+                    whiteMoves.erase(std::remove(whiteMoves.begin(), whiteMoves.end(), currentSearchIndex), whiteMoves.end());
                     blackMoves.push_back(currentSearchIndex);
                     board[currentSearchIndex].val = player;
                     
@@ -243,7 +243,7 @@ void ReversiBoard::flipWhiteHelper(short index) {
                 //also have to check if the next square isn't empty, or edge of board
                 if (nextDirection != -1 && board[nextDirection].val != -1)
                 {
-                    blackMoves.erase(std::remove(blackMoves.begin(), blackMoves.end(), currentSearchIndex));
+                    blackMoves.erase(std::remove(blackMoves.begin(), blackMoves.end(), currentSearchIndex), blackMoves.end());
                     whiteMoves.push_back(currentSearchIndex);
                     board[currentSearchIndex].val = player;
                     

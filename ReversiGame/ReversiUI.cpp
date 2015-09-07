@@ -23,8 +23,17 @@ void ReversiUI::ShowGrid(node board[], std::vector<short> moves) {
     for (short i = 0; i < 64; i++) {
         value = board[i].val;
         
-        if (moves.size() > 0 && (std::find(moves.begin(), moves.end(), board[i].index) != moves.end())) {
+        if (moves.size() > 0 && (std::find(moves.begin(), moves.end(), i) != moves.end())) {
             value = i;
+            
+            //i dun goofed. i used 0 to stand for black, and 1 for white. this also matches indices 0 and 1,
+            //which causes this function to draw a symbol instead of a number for valid move. this is a workaround
+            if (i == 0) {
+                value = -2;
+            }
+            if (i == 1) {
+                value = -3;
+            }
         }
         
         switch (value) {
@@ -39,7 +48,16 @@ void ReversiUI::ShowGrid(node board[], std::vector<short> moves) {
                 break;
             default:
                 if (value - 10 < 0) {
-                    std::cout << "  " << value << "  ";
+                    //workaround code. -2 is black and -3 is white
+                    if (value == -2) {
+                        std::cout << "  " << 0 << "  ";
+                    }
+                    else if (value == -3) {
+                        std::cout << "  " << 1 << "  ";
+                    }
+                    else {
+                        std::cout << "  " << value << "  ";
+                    }
                 }
                 else {
                     std::cout << " " << value << "  ";
@@ -47,6 +65,7 @@ void ReversiUI::ShowGrid(node board[], std::vector<short> moves) {
                 break;
         }
         
+        //line returns
         switch (i) {
             case 7:
             case 15:
@@ -97,8 +116,17 @@ void ReversiUI::ShowValidMoves(std::vector<short> moves) {
 }
 
 void ReversiUI::ShowScore(std::vector<short> blackMoves, std::vector<short> whiteMoves) {
-    std::cout << "Black's score: " << blackMoves.size() << std::endl;
-    std::cout << "White's score: " << whiteMoves.size() << std::endl;
+    std::cout << "Black's score: " << blackMoves.size() << " ( ";
+    for (short i = 0; i < blackMoves.size(); i++) {
+        std::cout << blackMoves[i] << " ";
+    }
+    std::cout << ")" << std::endl;
+    
+    std::cout << "White's score: " << whiteMoves.size() << " ( ";
+    for (short i = 0; i < whiteMoves.size(); i++) {
+        std::cout << whiteMoves[i] << " ";
+    }
+    std::cout << ")" << std::endl;
 }
 
 void ReversiUI::ShowWinner(std::vector<short> blackMoves, std::vector<short> whiteMoves) {
