@@ -628,6 +628,7 @@ void ReversiBoard::createBoard() {
                 board[i].ss = i + 8;
                 break;
                 
+                //everything else
             default:
                 board[i].nw = i - 9;
                 board[i].nn = i - 8;

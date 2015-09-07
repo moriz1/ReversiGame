@@ -14,8 +14,8 @@
 
 struct node {
     short val = -1;  //-1 = empty and valid move
-                     //-2 = black
-                     //-3 = white
+                     //0 = black
+                     //1 = white
                      //2 = empty and invalid move
     
     short index;

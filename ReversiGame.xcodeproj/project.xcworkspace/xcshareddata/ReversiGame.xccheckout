@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>53072F4D-77D7-45D9-9B94-1CFB8B66B72C</string>
+	<key>IDESourceControlProjectName</key>
+	<string>ReversiGame</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>E378C1017C74C61220E99AE45A8C8C633146A9F9</key>
+		<string>https://github.com/moriz1/ReversiGame.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>ReversiGame.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>E378C1017C74C61220E99AE45A8C8C633146A9F9</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/moriz1/ReversiGame.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>E378C1017C74C61220E99AE45A8C8C633146A9F9</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>E378C1017C74C61220E99AE45A8C8C633146A9F9</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ReversiGame</string>
+		</dict>
+	</array>
+</dict>
+</plist>
