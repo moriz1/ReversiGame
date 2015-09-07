@@ -306,12 +306,12 @@ void ReversiBoard::SetValidMoves() {
     if (player == 0) { //black's turn
         
         //now we look at squares around white's moves for valid black moves
-        for (short i = 0; i < whiteMoves.size(); i++) {
+        for (short i = 0; i < (short)whiteMoves.size(); i++) {
             setValidMovesBlackHelper(i);
         }
     }
     else {
-        for (short i = 0; i < blackMoves.size(); i++) {
+        for (short i = 0; i < (short)blackMoves.size(); i++) {
             setValidMovesWhiteHelper(i);
         }
     }
