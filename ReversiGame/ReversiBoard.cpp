@@ -78,19 +78,21 @@ void ReversiBoard::flip(short index) {
     
     //look through surrounding squares. if they exist in the other player's moves, flip them
     if (player == 0) {
-        flipBlackHelper(index);
+        flipHelper(index, &blackMoves, &whiteMoves);
     }
     else {
-        flipWhiteHelper(index);
+        flipHelper(index, &whiteMoves, &blackMoves);
     }
 }
 
-void ReversiBoard::flipBlackHelper(short index) {
+void ReversiBoard::flipHelper(short index, std::vector<short> *current, std::vector<short> *opponent) {
     short player = turn % 2;
     short direction = 0;
     short nextDirection = 0;
     short currentSearchIndex = -1;
     bool shouldStopSearching = false;
+    //this stores a list of possible indices for flipping
+    std::vector<short> pathIndices;
     
     for (short i = 0; i < 8; i++) {
         switch (i) {
@@ -131,13 +133,16 @@ void ReversiBoard::flipBlackHelper(short index) {
         
         currentSearchIndex = direction;
         while (!shouldStopSearching && currentSearchIndex != -1) {
-            if (std::find(whiteMoves.begin(), whiteMoves.end(), currentSearchIndex) != whiteMoves.end()) {
+            if (std::find(opponent->begin(), opponent->end(), currentSearchIndex) != opponent->end()) {
                 
                 //also have to check if the next square isn't empty, or edge of board
-                if (nextDirection != -1 && board[nextDirection].val != -1)
-                {
-                    whiteMoves.erase(std::remove(whiteMoves.begin(), whiteMoves.end(), currentSearchIndex), whiteMoves.end());
-                    blackMoves.push_back(currentSearchIndex);
+                if (nextDirection != -1 && board[nextDirection].val != -1) {
+                    
+                    //if the next square isn't already in pathIndices, add it
+                    if (!(std::find(pathIndices.begin(), pathIndices.end(), currentSearchIndex) != pathIndices.end())) {
+                        pathIndices.push_back(currentSearchIndex);
+                    }
+                    
                     board[currentSearchIndex].val = player;
                     
                     switch (i) {
@@ -176,11 +181,11 @@ void ReversiBoard::flipBlackHelper(short index) {
                             break;
                     }
                     
-                    //currentSearchIndex = board[currentSearchIndex].nw;
                     shouldStopSearching = false;
                 }
                 else {
                     shouldStopSearching = true;
+                    pathIndices.clear();    //clear pathIndices to prepare for next check
                 }
             }
             else {
@@ -189,135 +194,40 @@ void ReversiBoard::flipBlackHelper(short index) {
         }
         
         shouldStopSearching = false;
+        
+        //using pathIndices, flip nodes
+        if (pathIndices.size() > 0) {
+            for (int i = 0; i < (short)pathIndices.size(); i++) {
+                opponent->erase(std::remove(opponent->begin(), opponent->end(), pathIndices[i]), opponent->end());
+                current->push_back(pathIndices[i]);
+            }
+        }
+        
+        pathIndices.clear();
     }
-}
-
-void ReversiBoard::flipWhiteHelper(short index) {
-    short player = turn % 2;
-    short direction = 0;
-    short nextDirection = 0;
-    short currentSearchIndex = -1;
-    bool shouldStopSearching = false;
     
-    for (short i = 0; i < 8; i++) {
-        switch (i) {
-            case 0:
-                direction = board[index].nw;
-                nextDirection = board[direction].nw;
-                break;
-            case 1:
-                direction = board[index].nn;
-                nextDirection = board[direction].nn;
-                break;
-            case 2:
-                direction = board[index].ne;
-                nextDirection = board[direction].ne;
-                break;
-            case 3:
-                direction = board[index].ww;
-                nextDirection = board[direction].ww;
-                break;
-            case 4:
-                direction = board[index].ee;
-                nextDirection = board[direction].ee;
-                break;
-            case 5:
-                direction = board[index].sw;
-                nextDirection = board[direction].sw;
-                break;
-            case 6:
-                direction = board[index].ss;
-                nextDirection = board[direction].ss;
-                break;
-            case 7:
-            default:
-                direction = board[index].se;
-                nextDirection = board[direction].se;
-                break;
-        }
-        
-        currentSearchIndex = direction;
-        while (!shouldStopSearching && currentSearchIndex != -1) {
-            if (std::find(blackMoves.begin(), blackMoves.end(), currentSearchIndex) != blackMoves.end()) {
-                
-                //also have to check if the next square isn't empty, or edge of board
-                if (nextDirection != -1 && board[nextDirection].val != -1)
-                {
-                    blackMoves.erase(std::remove(blackMoves.begin(), blackMoves.end(), currentSearchIndex), blackMoves.end());
-                    whiteMoves.push_back(currentSearchIndex);
-                    board[currentSearchIndex].val = player;
-                    
-                    switch (i) {
-                        case 0:
-                            currentSearchIndex = nextDirection;
-                            nextDirection = board[nextDirection].nw;
-                            break;
-                        case 1:
-                            currentSearchIndex = nextDirection;
-                            nextDirection = board[nextDirection].nn;
-                            break;
-                        case 2:
-                            currentSearchIndex = nextDirection;
-                            nextDirection = board[nextDirection].ne;
-                            break;
-                        case 3:
-                            currentSearchIndex = nextDirection;
-                            nextDirection = board[nextDirection].ww;
-                            break;
-                        case 4:
-                            currentSearchIndex = nextDirection;
-                            nextDirection = board[nextDirection].ee;
-                            break;
-                        case 5:
-                            currentSearchIndex = nextDirection;
-                            nextDirection = board[nextDirection].sw;
-                            break;
-                        case 6:
-                            currentSearchIndex = nextDirection;
-                            nextDirection = board[nextDirection].ss;
-                            break;
-                        case 7:
-                        default:
-                            currentSearchIndex = nextDirection;
-                            nextDirection = board[nextDirection].se;
-                            break;
-                    }
-                    
-                    //currentSearchIndex = board[currentSearchIndex].nw;
-                    shouldStopSearching = false;
-                }
-                else {
-                    shouldStopSearching = true;
-                }
-            }
-            else {
-                shouldStopSearching = true;
-            }
-        }
-        
-        shouldStopSearching = false;
-    }
+    pathIndices.clear();
 }
 
 void ReversiBoard::SetValidMoves() {
     short player = turn % 2;
+    short movesSize = 0;
     validMoves.clear();
     
     if (player == 0) { //black's turn
-        
-        //now we look at squares around white's moves for valid black moves
-        for (short i = 0; i < (short)whiteMoves.size(); i++) {
-            setValidMovesBlackHelper(i);
-        }
+        movesSize = (short)whiteMoves.size();
     }
     else {
-        for (short i = 0; i < (short)blackMoves.size(); i++) {
-            setValidMovesWhiteHelper(i);
-        }
+        movesSize = (short)blackMoves.size();
+    }
+    
+    //now we look at squares around the opposing player's moves for valid moves
+    for (short i = 0; i < movesSize; i++) {
+        setValidMovesHelper(i);
     }
 }
 
-void ReversiBoard::setValidMovesBlackHelper(short index) {
+void ReversiBoard::setValidMovesHelper(short index) {
     short player = turn % 2;
     short direction = 0;
     short opposite = 0;
@@ -325,147 +235,80 @@ void ReversiBoard::setValidMovesBlackHelper(short index) {
     short currentSearchIndex = -1;
     
     for (short i = 0; i < 8; i++) {
-        switch (i) {
-            case 0:
-                direction = board[whiteMoves[index]].nw;
-                opposite = board[whiteMoves[index]].se;
-                break;
-            case 1:
-                direction = board[whiteMoves[index]].nn;
-                opposite = board[whiteMoves[index]].ss;
-                break;
-            case 2:
-                direction = board[whiteMoves[index]].ne;
-                opposite = board[whiteMoves[index]].sw;
-                break;
-            case 3:
-                direction = board[whiteMoves[index]].ww;
-                opposite = board[whiteMoves[index]].ee;
-                break;
-            case 4:
-                direction = board[whiteMoves[index]].ee;
-                opposite = board[whiteMoves[index]].ww;
-                break;
-            case 5:
-                direction = board[whiteMoves[index]].sw;
-                opposite = board[whiteMoves[index]].ne;
-                break;
-            case 6:
-                direction = board[whiteMoves[index]].ss;
-                opposite = board[whiteMoves[index]].nn;
-                break;
-            case 7:
-            default:
-                direction = board[whiteMoves[index]].se;
-                opposite = board[whiteMoves[index]].nw;
-                break;
-        }
         
-        //check in all directions for edge of board
-        //and that the square is unoccupied
-        if (direction != -1 && board[direction].val == -1) {
-            //if we find an unoccupied square in this direction, check the OTHER direction
-            //in a line, to see if we ever find a black move. if so, then this move is valid
-            
-            currentSearchIndex = opposite;
-            
-            while (!foundOrEdge) {
-                //if opposite square is edge of board, stop searching
-                if (currentSearchIndex == -1) {
-                    foundOrEdge = true;
-                }
-                //if opposite square is a black piece, we've found a valid move
-                else if (board[currentSearchIndex].val == player) {
-                    foundOrEdge = true;
-                    
-                    //check if this square is already in the validMoves vector
-                    if (!(std::find(validMoves.begin(), validMoves.end(), currentSearchIndex) != validMoves.end())) {
-                        validMoves.push_back(direction);
-                    }
-                }
-                //if opposite square is a white piece, set index to that square's index,
-                //and keep going
-                else if (board[currentSearchIndex].val != player) {
-                    foundOrEdge = false;
-                    
-                    switch (i) {
-                        case 0:
-                            opposite = board[currentSearchIndex].se;
-                            break;
-                        case 1:
-                            opposite = board[currentSearchIndex].ss;
-                            break;
-                        case 2:
-                            opposite = board[currentSearchIndex].sw;
-                            break;
-                        case 3:
-                            opposite = board[currentSearchIndex].ee;
-                            break;
-                        case 4:
-                            opposite = board[currentSearchIndex].ww;
-                            break;
-                        case 5:
-                            opposite = board[currentSearchIndex].ne;
-                            break;
-                        case 6:
-                            opposite = board[currentSearchIndex].nn;
-                            break;
-                        case 7:
-                        default:
-                            opposite = board[currentSearchIndex].nw;
-                            break;
-                    }
-                    
-                    currentSearchIndex = opposite;
-                }
+        if (player == 0) {
+            switch (i) {
+                case 0:
+                    direction = board[whiteMoves[index]].nw;
+                    opposite = board[whiteMoves[index]].se;
+                    break;
+                case 1:
+                    direction = board[whiteMoves[index]].nn;
+                    opposite = board[whiteMoves[index]].ss;
+                    break;
+                case 2:
+                    direction = board[whiteMoves[index]].ne;
+                    opposite = board[whiteMoves[index]].sw;
+                    break;
+                case 3:
+                    direction = board[whiteMoves[index]].ww;
+                    opposite = board[whiteMoves[index]].ee;
+                    break;
+                case 4:
+                    direction = board[whiteMoves[index]].ee;
+                    opposite = board[whiteMoves[index]].ww;
+                    break;
+                case 5:
+                    direction = board[whiteMoves[index]].sw;
+                    opposite = board[whiteMoves[index]].ne;
+                    break;
+                case 6:
+                    direction = board[whiteMoves[index]].ss;
+                    opposite = board[whiteMoves[index]].nn;
+                    break;
+                case 7:
+                default:
+                    direction = board[whiteMoves[index]].se;
+                    opposite = board[whiteMoves[index]].nw;
+                    break;
             }
         }
-        foundOrEdge = false;
-    }
-}
-
-void ReversiBoard::setValidMovesWhiteHelper(short index) {
-    short player = turn % 2;
-    short direction = 0;
-    short opposite = 0;
-    bool foundOrEdge = false;
-    short currentSearchIndex = -1;
-    
-    for (short i = 0; i < 8; i++) {
-        switch (i) {
-            case 0:
-                direction = board[blackMoves[index]].nw;
-                opposite = board[blackMoves[index]].se;
-                break;
-            case 1:
-                direction = board[blackMoves[index]].nn;
-                opposite = board[blackMoves[index]].ss;
-                break;
-            case 2:
-                direction = board[blackMoves[index]].ne;
-                opposite = board[blackMoves[index]].sw;
-                break;
-            case 3:
-                direction = board[blackMoves[index]].ww;
-                opposite = board[blackMoves[index]].ee;
-                break;
-            case 4:
-                direction = board[blackMoves[index]].ee;
-                opposite = board[blackMoves[index]].ww;
-                break;
-            case 5:
-                direction = board[blackMoves[index]].sw;
-                opposite = board[blackMoves[index]].ne;
-                break;
-            case 6:
-                direction = board[blackMoves[index]].ss;
-                opposite = board[blackMoves[index]].nn;
-                break;
-            case 7:
-            default:
-                direction = board[blackMoves[index]].se;
-                opposite = board[blackMoves[index]].nw;
-                break;
+        else {
+            switch (i) {
+                case 0:
+                    direction = board[blackMoves[index]].nw;
+                    opposite = board[blackMoves[index]].se;
+                    break;
+                case 1:
+                    direction = board[blackMoves[index]].nn;
+                    opposite = board[blackMoves[index]].ss;
+                    break;
+                case 2:
+                    direction = board[blackMoves[index]].ne;
+                    opposite = board[blackMoves[index]].sw;
+                    break;
+                case 3:
+                    direction = board[blackMoves[index]].ww;
+                    opposite = board[blackMoves[index]].ee;
+                    break;
+                case 4:
+                    direction = board[blackMoves[index]].ee;
+                    opposite = board[blackMoves[index]].ww;
+                    break;
+                case 5:
+                    direction = board[blackMoves[index]].sw;
+                    opposite = board[blackMoves[index]].ne;
+                    break;
+                case 6:
+                    direction = board[blackMoves[index]].ss;
+                    opposite = board[blackMoves[index]].nn;
+                    break;
+                case 7:
+                default:
+                    direction = board[blackMoves[index]].se;
+                    opposite = board[blackMoves[index]].nw;
+                    break;
+            }
         }
         
         //check in all directions for edge of board
@@ -481,6 +324,11 @@ void ReversiBoard::setValidMovesWhiteHelper(short index) {
                 if (currentSearchIndex == -1) {
                     foundOrEdge = true;
                 }
+                //if opposite square is a blank spot, stop searching
+                else if (board[currentSearchIndex].val == -1)
+                {
+                    foundOrEdge = true;
+                }
                 //if opposite square is a black piece, we've found a valid move
                 else if (board[currentSearchIndex].val == player) {
                     foundOrEdge = true;
@@ -494,6 +342,7 @@ void ReversiBoard::setValidMovesWhiteHelper(short index) {
                 //and keep going
                 else if (board[currentSearchIndex].val != player) {
                     foundOrEdge = false;
+                    
                     switch (i) {
                         case 0:
                             opposite = board[currentSearchIndex].se;

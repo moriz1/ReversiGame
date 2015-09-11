@@ -215,3 +215,5 @@ FakesAssemblies/
 **/*.Server/GeneratedArtifacts
 **/*.Server/ModelManifest.xml
 _Pvt_Extensions
+
+ReversiGame.xcodeproj/project.xcworkspace/xcuserdata/mypro.xcuserdatad/UserInterfaceState.xcuserstate
