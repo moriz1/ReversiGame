@@ -48,10 +48,8 @@ private:
     void createBoard();
     void killBoard();
     void flip(short index);
-    void setValidMovesBlackHelper(short index);
-    void setValidMovesWhiteHelper(short index);
-    void flipBlackHelper(short index);
-    void flipWhiteHelper(short index);
+    void setValidMovesHelper(short index);
+    void flipHelper(short index, std::vector<short> *current, std::vector<short> *opponent);
     
     short turn;
     node* board;
