@@ -103,7 +103,7 @@ void ReversiUI::ShowValidMoves(std::vector<short> moves) {
     if (moves.size() > 0) {
         std::cout << "valid moves: ";
         
-        for (short i = 0; i < moves.size(); i++) {
+        for (short i = 0; i < (short)moves.size(); i++) {
             std::cout << moves[i] << " ";
         }
         std::cout << std::endl;
@@ -117,13 +117,13 @@ void ReversiUI::ShowValidMoves(std::vector<short> moves) {
 
 void ReversiUI::ShowScore(std::vector<short> blackMoves, std::vector<short> whiteMoves) {
     std::cout << "Black's score: " << blackMoves.size() << " ( ";
-    for (short i = 0; i < blackMoves.size(); i++) {
+    for (short i = 0; i < (short)blackMoves.size(); i++) {
         std::cout << blackMoves[i] << " ";
     }
     std::cout << ")" << std::endl;
     
     std::cout << "White's score: " << whiteMoves.size() << " ( ";
-    for (short i = 0; i < whiteMoves.size(); i++) {
+    for (short i = 0; i < (short)whiteMoves.size(); i++) {
         std::cout << whiteMoves[i] << " ";
     }
     std::cout << ")" << std::endl;
