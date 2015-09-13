@@ -143,8 +143,6 @@ void ReversiBoard::flipHelper(short index, std::vector<short> *current, std::vec
                         pathIndices.push_back(currentSearchIndex);
                     }
                     
-                    board[currentSearchIndex].val = player;
-                    
                     switch (i) {
                         case 0:
                             currentSearchIndex = nextDirection;
@@ -200,6 +198,9 @@ void ReversiBoard::flipHelper(short index, std::vector<short> *current, std::vec
             for (int i = 0; i < (short)pathIndices.size(); i++) {
                 opponent->erase(std::remove(opponent->begin(), opponent->end(), pathIndices[i]), opponent->end());
                 current->push_back(pathIndices[i]);
+                
+                //actually updating the board values
+                board[pathIndices[i]].val = player;
             }
         }
         
